@@ -25,7 +25,7 @@ func main() {
 	}
 
 	tag := models.TagInit("div")
-	tag.SetClasses("title")
+	tag.SetClasses("content_wrapper")
 
 	scraper.Find(*tag).GetData()
 }

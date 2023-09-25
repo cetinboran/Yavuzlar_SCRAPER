@@ -13,10 +13,7 @@ func (c *Collector) SetData(data string) {
 }
 
 func (c *Collector) GetData() []string {
-	for _, v := range c.data {
-		fmt.Println(v)
-		fmt.Println()
-	}
+	fmt.Println(c.data)
 	return c.data
 }
 
