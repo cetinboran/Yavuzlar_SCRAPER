@@ -5,7 +5,13 @@ type Scraper struct {
 }
 
 type Tag struct {
-	name  string
-	ids   []string
-	class []string
+	Name   string
+	id     string
+	class  []string
+	Search *Search
+}
+
+type Search struct {
+	Start string
+	End   string
 }

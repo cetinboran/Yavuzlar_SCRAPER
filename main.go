@@ -10,7 +10,6 @@ func main() {
 	Scraper := models.ScraperInit()
 
 	div := models.TagInit("div")
-	div.SetClasses("anan")
 
 	Scraper.AddTag(*div)
 
