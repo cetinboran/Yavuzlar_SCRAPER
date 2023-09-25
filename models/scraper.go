@@ -1,16 +1,42 @@
 package models
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
 
 func ScraperInit() *Scraper {
-	return &Scraper{}
+	return &Scraper{config: configInit()}
+}
+
+func (s *Scraper) Oku() {
+	fmt.Println(s.head)
+
+	fmt.Println()
+	fmt.Println()
+
+	fmt.Println(s.body)
 }
 
 func (s *Scraper) SetBody(body []string) {
-	s.body = body
+	// BURADA GELEN HTML LİN BODY VE HEAD KISMINI AYIRIYORUM.
+
+	bodyPatern := `<body[^>]*>.*?</body>`
+	headPatern := `<head[^>]*>.*?</head>`
+
+	bodyRegex := regexp.MustCompile(bodyPatern)
+	bodyMatch := bodyRegex.FindString(strings.Join(body, " "))
+
+	headRegex := regexp.MustCompile(headPatern)
+	headMatch := headRegex.FindString(strings.Join(body, " "))
+
+	s.body = strings.Split(bodyMatch, " ")
+	s.head = strings.Split(headMatch, " ")
+}
+
+func (s *Scraper) SetConfig(config *Config) {
+	s.config = config
 }
 
 func (s *Scraper) getText(start, end int) string {
@@ -48,8 +74,13 @@ func (s *Scraper) Find(tag Tag) *Collector {
 	tag.Search.setSearch(tag)
 
 	startTag := tag.Search.Start
+	endTag := tag.Search.End
 
 	tagCount := 0
+
+	// BURASI YANLIŞ DÜZELT
+	// TAG COUNT HATALI OLUYOR
+	// REGEX İLE END INDEX BULMALISIN.
 
 	var i int
 	for i < len(s.body) {
@@ -61,8 +92,13 @@ func (s *Scraper) Find(tag Tag) *Collector {
 			// startIndex buraya ilk girdiğim kısım oluyor.
 			startIndex := i
 
-			// Bu fonksiyon ile endIndexsi buluyorum.
-			endIndex := s.findEndIndex(startTag, tag.Search.End, i, tagCount)
+			var endIndex int
+			if strings.Contains(s.body[i], endTag) {
+				endIndex = i + 1
+			} else {
+				// Bu fonksiyon ile endIndexsi buluyorum.
+				endIndex = s.findEndIndex(startTag, tag.Search.End, i, tagCount)
+			}
 
 			// Ustteki fonksiyonda i yi de yolladığım için 0 yapıyorum.
 			tagCount = 0
@@ -70,6 +106,7 @@ func (s *Scraper) Find(tag Tag) *Collector {
 			// Burada startIndex ve endIndex 1 az görünüyor Sayfa Kaynağından
 			// Çünkü index 0 dan başlar.
 
+			fmt.Println(startIndex, endIndex)
 			// data'yı collector'a ekliyorum.
 			var data string
 			if endIndex == -1 {
@@ -90,6 +127,34 @@ func (s *Scraper) Find(tag Tag) *Collector {
 	return &s.Collected[len(s.Collected)-1]
 }
 
+func (s *Scraper) s() {
+	tagPattern := `<([^<>]+)>`
+
+	// Regex desenini derle
+	regex := regexp.MustCompile(tagPattern)
+
+	tagCount := 0
+
+	for _, v := range s.body {
+
+		matches := regex.FindAllString(v, -1)
+
+		// Metinde eşleşen tagleri bul
+
+		// Her bir tagi kontrol et
+		for _, tag := range matches {
+			if tag[1] != '/' { // Açılan tag
+				fmt.Println(tag)
+				tagCount++
+			} else { // Kapanan tag
+				tagCount--
+			}
+		}
+	}
+
+	fmt.Println(tagCount)
+}
+
 func (s *Scraper) findEndIndex(startTag, endTag string, start, passedTags int) int {
 	tagCount := 0
 	i := start
@@ -107,7 +172,7 @@ func (s *Scraper) findEndIndex(startTag, endTag string, start, passedTags int) i
 		// İlk indexi bulurken geçtiğim tag sayısına eşit ise
 		// son indexi bulmuş oluyoruz.
 		if passedTags == tagCount {
-			return i + 1
+			return i
 		}
 		i++
 	}
