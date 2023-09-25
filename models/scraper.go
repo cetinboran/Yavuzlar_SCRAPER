@@ -35,26 +35,35 @@ func (s *Scraper) Find(tag Tag) *Collector {
 	tag.Search.setSearch(tag)
 
 	startTag := tag.Search.Start
-	endTag := tag.Search.End
 
-	var startIndex, endIndex int
+	tagCount := 0
 
 	var i int
 	for i < len(s.body) {
-
+		// Eğer startTag'ı içeriyorsa satır o zaman içeri giriyorum.
 		if strings.Contains(s.body[i], startTag) {
-			startIndex = i
-			for {
-				i++
+			// TagCount burada bulduğum tag sayısı
+			tagCount++
 
-				if strings.Contains(s.body[i], endTag) {
-					endIndex = i
-					break
-				}
+			// startIndex buraya ilk girdiğim kısım oluyor.
+			startIndex := i
+
+			// Bu fonksiyon ile endIndexsi buluyorum.
+			endIndex := s.findEndIndex(tag.Search.End, i, tagCount)
+
+			// Ustteki fonksiyonda i yi de yolladığım için 0 yapıyorum.
+			tagCount = 0
+
+			// data'yı collector'a ekliyorum.
+			var data string
+			if endIndex == -1 {
+				// Eğer last ındex yok ise belki end tagı olmayan input felandır
+				// o zaman tagın ilk görüldüğü satırı ekliyorum.
+				data = s.getText(startIndex-1, startIndex+1)
+			} else {
+				data = s.getText(startIndex-1, endIndex+1)
 			}
 
-			// Eğer döngüden çıktyısa içeriden texti çıkar
-			data := s.getText(startIndex-1, endIndex+1)
 			newCollector.SetData(data)
 		}
 
@@ -63,4 +72,22 @@ func (s *Scraper) Find(tag Tag) *Collector {
 
 	s.Collected = append(s.Collected, *newCollector)
 	return &s.Collected[len(s.Collected)-1]
+}
+
+func (s *Scraper) findEndIndex(endTag string, start, c int) int {
+	tagCount := 0
+	i := start
+	for i < len(s.body) {
+		if strings.Contains(s.body[i], endTag) {
+			// endIndex = i
+			tagCount++
+		}
+
+		if c == tagCount {
+			return i
+		}
+		i++
+	}
+
+	return -1
 }
