@@ -1,7 +1,5 @@
 package models
 
-import "fmt"
-
 type Loop func(i int, name string) string
 
 func collectorInit() *Collector {
@@ -13,7 +11,6 @@ func (c *Collector) SetData(data string) {
 }
 
 func (c *Collector) GetData() []string {
-	fmt.Println(c.data)
 	return c.data
 }
 

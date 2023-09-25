@@ -23,6 +23,14 @@ func (s *Scraper) getText(start, end int) string {
 	re := regexp.MustCompile(">([^<]+)")
 	matches := re.FindAllStringSubmatch(body, -1)
 
+	// Bunun ile tersini yani tag olanları buluyoruz
+	// Bunun ile daha şekilli şukkullu bir data dönebilir
+	// şimdillik geçtim.
+
+	// a := regexp.MustCompile("<[^>]+>")
+	// q := a.FindAllStringSubmatch(body, -1)
+	// fmt.Println(q)
+
 	var data []string
 	for _, match := range matches {
 		match[1] = strings.TrimSpace(match[1])
