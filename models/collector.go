@@ -10,6 +10,10 @@ func (c *Collector) SetData(data string) {
 	c.data = append(c.data, data)
 }
 
+func (c *Collector) SetSearched(title string) {
+	c.searched = title
+}
+
 func (c *Collector) GetData() []string {
 	return c.data
 }

@@ -18,5 +18,6 @@ type Search struct {
 }
 
 type Collector struct {
-	data []string
+	searched string
+	data     []string
 }

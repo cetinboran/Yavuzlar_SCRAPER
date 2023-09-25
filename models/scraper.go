@@ -43,6 +43,7 @@ func (s *Scraper) getText(start, end int) string {
 
 func (s *Scraper) Find(tag Tag) *Collector {
 	newCollector := collectorInit()
+	newCollector.SetSearched(tag.Search.Start)
 
 	tag.Search.setSearch(tag)
 
@@ -112,4 +113,8 @@ func (s *Scraper) findEndIndex(startTag, endTag string, start, passedTags int) i
 	}
 
 	return -1
+}
+
+func (s *Scraper) Save() {
+	// Yaptıkları aramaya göre save atıcam json'a
 }
