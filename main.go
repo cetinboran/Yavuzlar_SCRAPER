@@ -1,27 +1,18 @@
 package main
 
 import (
-	cla "github.com/cetinboran/goarg/CLA"
-	"github.com/cetinboran/yavuzlarscraper/handleinput"
+	"fmt"
+
+	"github.com/cetinboran/yavuzlarscraper/models"
 )
 
 func main() {
-	Setup := cla.Init()
+	Scraper := models.ScraperInit()
 
-	Setup.SetUsage("Yavuzlar Scraper", "This is web scraper.", []string{})
+	div := models.TagInit("div")
+	div.SetClasses("anan")
 
-	Setup.AddOptionTitle("INPUT OPTION")
-	Setup.AddOption("-u", false, "Enter the url")
+	Scraper.AddTag(*div)
 
-	Setup.AddOptionTitle("SEARCH OPTION")
-	Setup.AddOption("-t", false, "Set tag. a;href,div")
-	Setup.AddOption("-c", false, "Search with class.")
-	Setup.AddOption("-i", false, "Search with id.")
-
-	Setup.AutomaticUsage()
-
-	args, errors := Setup.Start()
-
-	handleinput.Handle(args, errors)
-
+	fmt.Println(Scraper)
 }

@@ -1,7 +1,11 @@
 package models
 
 type Scraper struct {
-	Url   string
-	Class string
-	Id    string
+	tags []Tag
+}
+
+type Tag struct {
+	name  string
+	ids   []string
+	class []string
 }

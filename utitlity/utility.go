@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// ŞUANLIK KULLANILMIYOR
 func ClassNIdParser(classOrId string) map[string]string {
 	// Alttaki formatta göre gelicek.
 	// div:title,red; artical;  a:link
