@@ -1,7 +1,8 @@
 package models
 
 type Scraper struct {
-	tags []Tag
+	body      []string
+	Collected []Collector
 }
 
 type Tag struct {
@@ -14,4 +15,8 @@ type Tag struct {
 type Search struct {
 	Start string
 	End   string
+}
+
+type Collector struct {
+	data []string
 }

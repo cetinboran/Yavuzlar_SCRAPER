@@ -15,7 +15,7 @@ func (s *Search) setSearch(t Tag) {
 }
 
 func (s *Search) setStart(t Tag) {
-	start := fmt.Sprintf("<%v", t.Name)
+	start := fmt.Sprintf("%v", t.Name)
 
 	if len(t.class) > 0 {
 		classes := strings.Join(t.class, " ")
@@ -28,12 +28,11 @@ func (s *Search) setStart(t Tag) {
 	if t.id != "" {
 		start += fmt.Sprintf(` id="%v"`, t.id)
 	}
-	start += ">"
 
 	s.Start = start
 }
 
 func (s *Search) setEnd(t Tag) {
-	end := fmt.Sprintf("</%v>", t.Name)
+	end := fmt.Sprintf("/%v", t.Name)
 	s.End = end
 }
