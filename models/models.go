@@ -1,9 +1,11 @@
 package models
 
+import "github.com/cetinboran/gojson/gojson"
+
 type Scraper struct {
-	head      []string
 	body      []string
 	Collected []Collector
+	database  *gojson.Database
 	config    *Config
 }
 

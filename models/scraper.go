@@ -1,22 +1,17 @@
 package models
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/cetinboran/yavuzlarscraper/database"
 )
 
 func ScraperInit() *Scraper {
-	return &Scraper{config: configInit()}
-}
+	// gojsondan aldığım db yi koyuyorum kayıt işlemleri buraya olucak.
+	db := database.DBStart()
 
-func (s *Scraper) Oku() {
-	fmt.Println(s.head)
-
-	fmt.Println()
-	fmt.Println()
-
-	fmt.Println(s.body)
+	return &Scraper{config: configInit(), database: &db}
 }
 
 func (s *Scraper) SetBody(body []string) {
