@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-type Loop func(i int, name string) string
+type Each func(i int, name string)
 
 func collectorInit() *Collector {
 	return &Collector{}
@@ -32,6 +32,16 @@ func (c *Collector) GetData() []string {
 	return c.data
 }
 
-func (c *Collector) Each(f Loop) {
+func (c *Collector) Each(f Each) {
+	var clearData []string
 
+	for _, v := range c.data {
+		for _, v2 := range strings.Split(v, "\n") {
+			clearData = append(clearData, v2)
+		}
+	}
+
+	for i, v := range clearData {
+		f(i, v)
+	}
 }

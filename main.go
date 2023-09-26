@@ -27,7 +27,7 @@ func main() {
 
 	// AutoSave Added.
 	scraper.SetConfig(&models.Config{
-		AutoSave: true,
+		AutoSave: false,
 	})
 
 	tag := models.TagInit("div")
@@ -36,12 +36,9 @@ func main() {
 	tag1 := models.TagInit("div")
 	tag1.SetClasses("title")
 
-	scraper.Find(*tag)
+	scraper.Find(*tag).Each(func(i int, name string) {
+		fmt.Println(i, name)
+	})
 	scraper.Find(*tag1)
 
-	// data := scraper.Find(*tag).GetData()
-	// for _, v := range data {
-	// 	fmt.Println(v)
-	// 	fmt.Println()
-	// }
 }
