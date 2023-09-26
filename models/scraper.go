@@ -44,7 +44,7 @@ func (s *Scraper) getText(start, end int) string {
 		data = append(data, match[1])
 	}
 
-	return strings.Join(data, "|")
+	return strings.Join(data, " | ")
 }
 
 func (s *Scraper) Find(tag Tag) *Collector {
