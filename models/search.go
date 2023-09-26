@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -10,26 +11,39 @@ func SearchInit() *Search {
 }
 
 func (s *Search) setSearch(t Tag) {
-	s.setStart(t)
+	s.createRegex(t)
 	s.setEnd(t)
 }
 
-func (s *Search) setStart(t Tag) {
-	start := fmt.Sprintf("%v", t.Name)
+func (s *Search) createRegex(t Tag) {
+	// <div[^>]*class="selam"[^>]*id="3"[^>]*> working regex
+
+	regex := fmt.Sprintf(`<%v`, t.Name)
 
 	if len(t.class) > 0 {
 		classes := strings.Join(t.class, " ")
 
-		start += ` class="`
-		start += classes
-		start += `"`
+		regex += `\s+[^>]*class="`
+		regex += classes
+		regex += `"`
 	}
 
 	if t.id != "" {
-		start += fmt.Sprintf(` id="%v"`, t.id)
+		regex += `[^>]*`
+		regex += fmt.Sprintf(`id="%v"`, t.id)
 	}
 
-	s.Start = start
+	regex += `[^>]*>`
+
+	s.StartReg = regex
+}
+
+func (s *Search) RegexCheck(t Tag, data string) bool {
+	// Regex'i işliyorum
+	reg := regexp.MustCompile(s.StartReg)
+
+	// gelen Data'da regex var ise true yok ise false dönüyor.
+	return reg.MatchString(data)
 }
 
 func (s *Search) setEnd(t Tag) {

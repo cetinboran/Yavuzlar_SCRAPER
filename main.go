@@ -33,13 +33,10 @@ func main() {
 	tag := models.TagInit("div")
 	tag.SetClasses("description")
 
-	// scraper.Oku()
-
-	scraper.Find(*tag).GetData()
-
-	// data := scraper.Find(*tag).GetData()
-	// for _, v := range data {
-	// 	fmt.Println(v)
-	// 	fmt.Println()
-	// }
+	// scraper.Find(*tag).GetData()
+	data := scraper.Find(*tag).GetData()
+	for _, v := range data {
+		fmt.Println(v)
+		fmt.Println()
+	}
 }

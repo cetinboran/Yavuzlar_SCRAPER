@@ -20,20 +20,6 @@ func (s *Scraper) Oku() {
 }
 
 func (s *Scraper) SetBody(body []string) {
-	// BURADA GELEN HTML LİN BODY VE HEAD KISMINI AYIRIYORUM.
-
-	// bodyPatern := `<body[^>]*>.*?</body>`
-	// headPatern := `<head[^>]*>.*?</head>`
-
-	// bodyRegex := regexp.MustCompile(bodyPatern)
-	// bodyMatch := bodyRegex.FindString(strings.Join(body, " "))
-
-	// headRegex := regexp.MustCompile(headPatern)
-	// headMatch := headRegex.FindString(strings.Join(body, " "))
-
-	// s.body = strings.Split(bodyMatch, " ")
-	// s.head = strings.Split(headMatch, " ")
-
 	s.body = body
 }
 
@@ -51,14 +37,6 @@ func (s *Scraper) getText(start, end int) string {
 	re := regexp.MustCompile(">([^<]+)")
 	matches := re.FindAllStringSubmatch(body, -1)
 
-	// Bunun ile tersini yani tag olanları buluyoruz
-	// Bunun ile daha şekilli şukkullu bir data dönebilir
-	// şimdillik geçtim.
-
-	// a := regexp.MustCompile("<[^>]+>")
-	// q := a.FindAllStringSubmatch(body, -1)
-	// fmt.Println(q)
-
 	var data []string
 	for _, match := range matches {
 		match[1] = strings.TrimSpace(match[1])
@@ -71,35 +49,20 @@ func (s *Scraper) getText(start, end int) string {
 
 func (s *Scraper) Find(tag Tag) *Collector {
 	newCollector := collectorInit()
-	newCollector.SetSearched(tag.Search.Start)
 
+	// Burada setSearch ile search'ın içeriğini dolduruyorum.
+	// Regex'leri end tagleri oluşturuyorum.
 	tag.Search.setSearch(tag)
-
-	startTag := tag.Search.Start
-	// endTag := tag.Search.End
 
 	var i int
 	for i < len(s.body) {
-		// Eğer startTag'ı içeriyorsa satır o zaman içeri giriyorum.
-
-		// strings.Contains(s.body[i], startTag) => Bu Divlerde çalışıyo alttaki formlarda
-		// YANI KISACA ÇALIŞMIYOR AMK
-		if s.CheckTag(startTag, i) {
-			// TagCount burada bulduğum tag sayısı
-
-			// startIndex buraya ilk girdiğim kısım oluyor.
+		if tag.Search.RegexCheck(tag, s.body[i]) {
 			startIndex := i
+			endIndex := s.findEndIndex(startIndex)
 
-			var endIndex int
-			endIndex = s.findEndIndex(i)
-
-			fmt.Println(startIndex, endIndex)
-
-			// data'yı collector'a ekliyorum.
 			var data string
-			if endIndex == -1 {
-				// Eğer last ındex yok ise belki end tagı olmayan input felandır
-				// o zaman tagın ilk görüldüğü satırı ekliyorum.
+			if endIndex == startIndex {
+				// Burası eğer input felan arıyorsa giricek.
 				data = s.getText(startIndex, startIndex+1)
 			} else {
 				data = s.getText(startIndex, endIndex)
@@ -113,22 +76,6 @@ func (s *Scraper) Find(tag Tag) *Collector {
 
 	s.Collected = append(s.Collected, *newCollector)
 	return &s.Collected[len(s.Collected)-1]
-}
-
-func (s *Scraper) CheckTag(startTag string, i int) bool {
-	bodyIArr := strings.Split(s.body[i], " ")
-	startTagArr := strings.Split(startTag, " ")
-
-	check := len(startTagArr)
-	for _, v := range startTagArr {
-		for _, v2 := range bodyIArr {
-			if strings.Contains(v2, v) {
-				check--
-			}
-		}
-	}
-
-	return check == 0
 }
 
 func (s *Scraper) findEndIndex(start int) int {
@@ -176,12 +123,14 @@ func (s *Scraper) findEndIndex(start int) int {
 			} else if strings.HasPrefix(tag, "</") {
 				// Kapalı etiket
 				tagCount--
-				if tagCount == 0 {
-					return i
-				}
 			}
 
-			// fmt.Println(tagCount, tag)
+			// TagCount 0 ise kapanış tagını buldun.
+			// Hata buradaymıs bunu yanlışlıkla else if içine almışssın.
+			if tagCount == 0 {
+				return i
+			}
+
 		}
 	}
 
