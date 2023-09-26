@@ -49,15 +49,27 @@ func (s *Scraper) getText(start, end int) string {
 
 func (s *Scraper) Find(tag Tag) *Collector {
 	newCollector := collectorInit()
-	newCollector.SetSearched(tag.Search.Start)
 
+	// Burada setSearch ile search'ın içeriğini dolduruyorum.
+	// Regex'leri end tagleri oluşturuyorum.
 	tag.Search.setSearch(tag)
-
-	// startTag := tag.Search.Start
-	// endTag := tag.Search.End
 
 	var i int
 	for i < len(s.body) {
+		if tag.Search.RegexCheck(tag, s.body[i]) {
+			startIndex := i
+			endIndex := s.findEndIndex(startIndex)
+
+			var data string
+			if endIndex == startIndex {
+				// Burası eğer input felan arıyorsa giricek.
+				data = s.getText(startIndex, startIndex+1)
+			} else {
+				data = s.getText(startIndex, endIndex)
+			}
+
+			newCollector.SetData(data)
+		}
 
 		i++
 	}
@@ -111,12 +123,14 @@ func (s *Scraper) findEndIndex(start int) int {
 			} else if strings.HasPrefix(tag, "</") {
 				// Kapalı etiket
 				tagCount--
-				if tagCount == 0 {
-					return i
-				}
 			}
 
-			// fmt.Println(tagCount, tag)
+			// TagCount 0 ise kapanış tagını buldun.
+			// Hata buradaymıs bunu yanlışlıkla else if içine almışssın.
+			if tagCount == 0 {
+				return i
+			}
+
 		}
 	}
 

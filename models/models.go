@@ -20,7 +20,6 @@ type Tag struct {
 
 type Search struct {
 	StartReg string
-	Start    string
 	End      string
 }
 
