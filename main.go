@@ -10,7 +10,8 @@ import (
 )
 
 func main() {
-	res, err := http.Get("http://localhost/Yavuzlar_TODO_PHP")
+	// http://localhost/Yavuzlar_TODO_PHP/src/register.php
+	res, err := http.Get("http://localhost/myBlog/about.php")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,12 +30,12 @@ func main() {
 		AutoSave: true,
 	})
 
-	tag := models.TagInit("form")
-	tag.SetClasses("relative")
+	tag := models.TagInit("div")
+	tag.SetClasses("description")
 
 	// scraper.Oku()
 
-	scraper.Find(*tag)
+	scraper.Find(*tag).GetData()
 
 	// data := scraper.Find(*tag).GetData()
 	// for _, v := range data {

@@ -22,17 +22,19 @@ func (s *Scraper) Oku() {
 func (s *Scraper) SetBody(body []string) {
 	// BURADA GELEN HTML LİN BODY VE HEAD KISMINI AYIRIYORUM.
 
-	bodyPatern := `<body[^>]*>.*?</body>`
-	headPatern := `<head[^>]*>.*?</head>`
+	// bodyPatern := `<body[^>]*>.*?</body>`
+	// headPatern := `<head[^>]*>.*?</head>`
 
-	bodyRegex := regexp.MustCompile(bodyPatern)
-	bodyMatch := bodyRegex.FindString(strings.Join(body, " "))
+	// bodyRegex := regexp.MustCompile(bodyPatern)
+	// bodyMatch := bodyRegex.FindString(strings.Join(body, " "))
 
-	headRegex := regexp.MustCompile(headPatern)
-	headMatch := headRegex.FindString(strings.Join(body, " "))
+	// headRegex := regexp.MustCompile(headPatern)
+	// headMatch := headRegex.FindString(strings.Join(body, " "))
 
-	s.body = strings.Split(bodyMatch, " ")
-	s.head = strings.Split(headMatch, " ")
+	// s.body = strings.Split(bodyMatch, " ")
+	// s.head = strings.Split(headMatch, " ")
+
+	s.body = body
 }
 
 func (s *Scraper) SetConfig(config *Config) {
@@ -74,39 +76,25 @@ func (s *Scraper) Find(tag Tag) *Collector {
 	tag.Search.setSearch(tag)
 
 	startTag := tag.Search.Start
-	endTag := tag.Search.End
-
-	tagCount := 0
-
-	// BURASI YANLIŞ DÜZELT
-	// TAG COUNT HATALI OLUYOR
-	// REGEX İLE END INDEX BULMALISIN.
+	// endTag := tag.Search.End
 
 	var i int
 	for i < len(s.body) {
 		// Eğer startTag'ı içeriyorsa satır o zaman içeri giriyorum.
-		if strings.Contains(s.body[i], startTag) {
+
+		// strings.Contains(s.body[i], startTag) => Bu Divlerde çalışıyo alttaki formlarda
+		// YANI KISACA ÇALIŞMIYOR AMK
+		if s.CheckTag(startTag, i) {
 			// TagCount burada bulduğum tag sayısı
-			tagCount++
 
 			// startIndex buraya ilk girdiğim kısım oluyor.
 			startIndex := i
 
 			var endIndex int
-			if strings.Contains(s.body[i], endTag) {
-				endIndex = i + 1
-			} else {
-				// Bu fonksiyon ile endIndexsi buluyorum.
-				endIndex = s.findEndIndex(startTag, tag.Search.End, i, tagCount)
-			}
-
-			// Ustteki fonksiyonda i yi de yolladığım için 0 yapıyorum.
-			tagCount = 0
-
-			// Burada startIndex ve endIndex 1 az görünüyor Sayfa Kaynağından
-			// Çünkü index 0 dan başlar.
+			endIndex = s.findEndIndex(i)
 
 			fmt.Println(startIndex, endIndex)
+
 			// data'yı collector'a ekliyorum.
 			var data string
 			if endIndex == -1 {
@@ -127,54 +115,74 @@ func (s *Scraper) Find(tag Tag) *Collector {
 	return &s.Collected[len(s.Collected)-1]
 }
 
-func (s *Scraper) s() {
-	tagPattern := `<([^<>]+)>`
+func (s *Scraper) CheckTag(startTag string, i int) bool {
+	bodyIArr := strings.Split(s.body[i], " ")
+	startTagArr := strings.Split(startTag, " ")
 
-	// Regex desenini derle
-	regex := regexp.MustCompile(tagPattern)
-
-	tagCount := 0
-
-	for _, v := range s.body {
-
-		matches := regex.FindAllString(v, -1)
-
-		// Metinde eşleşen tagleri bul
-
-		// Her bir tagi kontrol et
-		for _, tag := range matches {
-			if tag[1] != '/' { // Açılan tag
-				fmt.Println(tag)
-				tagCount++
-			} else { // Kapanan tag
-				tagCount--
+	check := len(startTagArr)
+	for _, v := range startTagArr {
+		for _, v2 := range bodyIArr {
+			if strings.Contains(v2, v) {
+				check--
 			}
 		}
 	}
 
-	fmt.Println(tagCount)
+	return check == 0
 }
 
-func (s *Scraper) findEndIndex(startTag, endTag string, start, passedTags int) int {
+func (s *Scraper) findEndIndex(start int) int {
+	onlyOpenedTags := "area base br col embed hr img input link meta source track wbr"
+	onlyOpenedTagsArr := strings.Split(onlyOpenedTags, " ")
+
 	tagCount := 0
-	i := start
-	for i < len(s.body) {
-		if strings.Contains(s.body[i], startTag) {
-			// Eğer yine startTag'a gelirsem tagCount ü düşüyorum
-			tagCount--
-		}
 
-		if strings.Contains(s.body[i], endTag) {
-			// Eğer endTag'a geldiysem tagCount'u arttırıyorum.
-			tagCount++
-		}
+	tagPattern := `<[^>]+>`
 
-		// İlk indexi bulurken geçtiğim tag sayısına eşit ise
-		// son indexi bulmuş oluyoruz.
-		if passedTags == tagCount {
-			return i
+	reg := regexp.MustCompile(tagPattern)
+
+	for i := start; i <= len(s.body)-1; i++ {
+		tag := reg.FindString(s.body[i])
+		if tag != "" {
+			// Eğer < ile başlıyorsa ve </ ile başlamıyor ise açıktır
+			if strings.HasPrefix(tag, "<") && !strings.HasPrefix(tag, "</") {
+				tagName := strings.TrimPrefix(tag, "<")
+				tagName = strings.TrimSuffix(tagName, ">")
+
+				// Gelen Tag'ın ismini buluyorum.
+				tagNameTag := strings.TrimSpace(strings.Split(tagName, " ")[0])
+
+				// Tag'ın içine bakıyoruz eğer kapanmayan bir tag değil ise tagCount u arttır
+				// Kapanmayan bir tag ise tagCount arttırmasak da olur tree olmuyor
+
+				has := false
+				for _, v := range onlyOpenedTagsArr {
+					if v == tagNameTag {
+						has = true
+						break
+					}
+				}
+
+				if !has {
+					tagCount++
+				}
+
+				// Eğer gelen satırda </ var ise tagcount'u da azalt yine
+				if strings.Contains(s.body[i], "</") {
+					tagCount--
+				}
+
+				// Eğer </ ise kapanışş tag'ıdır.
+			} else if strings.HasPrefix(tag, "</") {
+				// Kapalı etiket
+				tagCount--
+				if tagCount == 0 {
+					return i
+				}
+			}
+
+			// fmt.Println(tagCount, tag)
 		}
-		i++
 	}
 
 	return -1
