@@ -10,20 +10,25 @@ func SearchInit() *Search {
 	return &Search{}
 }
 
+// Sets all the things we need.
 func (s *Search) setSearch(t Tag) {
 	s.createRegex(t)
 	s.setEnd(t)
 }
 
 func (s *Search) createRegex(t Tag) {
-	// <div[^>]*class="selam"[^>]*id="3"[^>]*> working regex
+	// <div[^>]*class="selam"[^>]*id="3"[^>]*> => DORU BU
+	regex := "<"
 
-	regex := fmt.Sprintf(`<%v`, t.Name)
+	// Eğer tag ismi girilmediyse sadece girilenlere göre arasın.
+	if t.Name != "" {
+		regex += t.Name
+	}
 
 	if len(t.class) > 0 {
 		classes := strings.Join(t.class, " ")
 
-		regex += `\s+[^>]*class="`
+		regex += `[^>]*class="`
 		regex += classes
 		regex += `"`
 	}

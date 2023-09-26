@@ -43,7 +43,7 @@ func (s *Scraper) getText(start, end int) string {
 	return strings.Join(data, "\n")
 }
 
-func (s *Scraper) Find(tag Tag) *Collector {
+func (s *Scraper) FindWithTag(tag Tag) *Collector {
 	newCollector := collectorInit()
 	newCollector.setSearched(tag)
 
@@ -54,6 +54,7 @@ func (s *Scraper) Find(tag Tag) *Collector {
 	var i int
 	for i < len(s.body) {
 		if tag.Search.RegexCheck(tag, s.body[i]) {
+
 			startIndex := i
 			endIndex := s.findEndIndex(startIndex)
 
@@ -75,6 +76,12 @@ func (s *Scraper) Find(tag Tag) *Collector {
 
 	s.Collected = append(s.Collected, *newCollector)
 	return &s.Collected[len(s.Collected)-1]
+}
+
+func (s *Scraper) Find(tagStr string) *Collector {
+	newTag := createTag(tagStr)
+
+	return s.FindWithTag(*newTag)
 }
 
 func (s *Scraper) findEndIndex(start int) int {

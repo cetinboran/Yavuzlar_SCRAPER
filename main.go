@@ -30,15 +30,20 @@ func main() {
 		AutoSave: false,
 	})
 
-	tag := models.TagInit("div")
+	tag := models.TagInit()
+	tag.SetName("div")
 	tag.SetClasses("description")
 
-	tag1 := models.TagInit("div")
-	tag1.SetClasses("title")
-
-	scraper.Find(*tag).Each(func(i int, name string) {
+	// Tag objesi ile arama.
+	scraper.FindWithTag(*tag).Each(func(i int, name string) {
 		fmt.Println(i, name)
 	})
-	scraper.Find(*tag1)
+
+	fmt.Println()
+
+	// Düz Arama
+	scraper.Find("div .title").Each(func(i int, name string) {
+		fmt.Println(i, name)
+	})
 
 }
