@@ -136,6 +136,7 @@ func (s *Scraper) findEndIndex(start int) int {
 
 func (s *Scraper) Save() {
 	CollectionTable := s.database.Tables["Collection"]
+	CollectionTable.Reset() // Önce içeriği siliyorum sonra tekrar yazıyorum.
 
 	for _, c := range s.Collected {
 		var newDataArr []string
