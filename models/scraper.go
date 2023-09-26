@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/cetinboran/gojson/gojson"
 	"github.com/cetinboran/yavuzlarscraper/database"
 )
 
@@ -39,11 +40,12 @@ func (s *Scraper) getText(start, end int) string {
 		data = append(data, match[1])
 	}
 
-	return strings.Join(data, " | ")
+	return strings.Join(data, "\n")
 }
 
 func (s *Scraper) Find(tag Tag) *Collector {
 	newCollector := collectorInit()
+	newCollector.setSearched(tag)
 
 	// Burada setSearch ile search'ın içeriğini dolduruyorum.
 	// Regex'leri end tagleri oluşturuyorum.
@@ -133,5 +135,20 @@ func (s *Scraper) findEndIndex(start int) int {
 }
 
 func (s *Scraper) Save() {
+	CollectionTable := s.database.Tables["Collection"]
+
+	for _, c := range s.Collected {
+		var newDataArr []string
+
+		for _, v := range c.data {
+			for _, v2 := range strings.Split(v, "\n") {
+				newDataArr = append(newDataArr, v2)
+			}
+		}
+
+		newData := gojson.DataInit([]string{"Searched", "Findings"}, []interface{}{c.searched, newDataArr}, CollectionTable)
+		CollectionTable.Save(newData)
+	}
+
 	// Yaptıkları aramaya göre save atıcam json'a
 }

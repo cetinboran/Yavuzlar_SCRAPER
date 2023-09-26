@@ -33,10 +33,17 @@ func main() {
 	tag := models.TagInit("div")
 	tag.SetClasses("description")
 
-	// scraper.Find(*tag).GetData()
-	data := scraper.Find(*tag).GetData()
-	for _, v := range data {
-		fmt.Println(v)
-		fmt.Println()
-	}
+	tag1 := models.TagInit("div")
+	tag1.SetClasses("title")
+
+	scraper.Find(*tag)
+	scraper.Find(*tag1)
+
+	scraper.Save()
+
+	// data := scraper.Find(*tag).GetData()
+	// for _, v := range data {
+	// 	fmt.Println(v)
+	// 	fmt.Println()
+	// }
 }

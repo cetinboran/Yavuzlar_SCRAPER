@@ -1,2 +1,4 @@
 github.com/cetinboran/gojson v1.0.8-1 h1:RMgfsM9lGCZDjMN2aDbuzwpfXdpRcUUt7208TH04HMI=
 github.com/cetinboran/gojson v1.0.8-1/go.mod h1:tHT8aymKPzyYbK+9Ab19lw2fvAMsHMeEeUYUu/obQNE=
+github.com/cetinboran/gojson v1.0.8-2 h1:mOyGGB2eKrrk8+BPpRlP8fu3K2Xwr6fnYXpmC6RnePQ=
+github.com/cetinboran/gojson v1.0.8-2/go.mod h1:tHT8aymKPzyYbK+9Ab19lw2fvAMsHMeEeUYUu/obQNE=
