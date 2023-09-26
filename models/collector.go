@@ -10,7 +10,7 @@ func collectorInit() *Collector {
 	return &Collector{}
 }
 
-func (c *Collector) SetData(data string) {
+func (c *Collector) setData(data string) {
 	c.data = append(c.data, data)
 }
 

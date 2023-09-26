@@ -65,7 +65,7 @@ func (s *Scraper) Find(tag Tag) *Collector {
 				data = s.getText(startIndex, endIndex)
 			}
 
-			newCollector.SetData(data)
+			newCollector.setData(data)
 		}
 
 		i++
