@@ -71,6 +71,8 @@ func (s *Scraper) Find(tag Tag) *Collector {
 		i++
 	}
 
+	s.autoSave()
+
 	s.Collected = append(s.Collected, *newCollector)
 	return &s.Collected[len(s.Collected)-1]
 }
@@ -132,6 +134,12 @@ func (s *Scraper) findEndIndex(start int) int {
 	}
 
 	return -1
+}
+
+func (s *Scraper) autoSave() {
+	if s.config.AutoSave {
+		s.Save()
+	}
 }
 
 func (s *Scraper) Save() {

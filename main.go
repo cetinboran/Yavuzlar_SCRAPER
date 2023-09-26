@@ -39,8 +39,6 @@ func main() {
 	scraper.Find(*tag)
 	scraper.Find(*tag1)
 
-	scraper.Save()
-
 	// data := scraper.Find(*tag).GetData()
 	// for _, v := range data {
 	// 	fmt.Println(v)
