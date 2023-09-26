@@ -20,20 +20,6 @@ func (s *Scraper) Oku() {
 }
 
 func (s *Scraper) SetBody(body []string) {
-	// BURADA GELEN HTML LİN BODY VE HEAD KISMINI AYIRIYORUM.
-
-	// bodyPatern := `<body[^>]*>.*?</body>`
-	// headPatern := `<head[^>]*>.*?</head>`
-
-	// bodyRegex := regexp.MustCompile(bodyPatern)
-	// bodyMatch := bodyRegex.FindString(strings.Join(body, " "))
-
-	// headRegex := regexp.MustCompile(headPatern)
-	// headMatch := headRegex.FindString(strings.Join(body, " "))
-
-	// s.body = strings.Split(bodyMatch, " ")
-	// s.head = strings.Split(headMatch, " ")
-
 	s.body = body
 }
 
