@@ -19,8 +19,9 @@ type Tag struct {
 }
 
 type Search struct {
-	Start string
-	End   string
+	StartReg string
+	Start    string
+	End      string
 }
 
 type Collector struct {

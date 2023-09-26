@@ -31,7 +31,6 @@ func main() {
 	})
 
 	tag := models.TagInit("div")
-	tag.SetClasses("description")
 
 	// scraper.Oku()
 
