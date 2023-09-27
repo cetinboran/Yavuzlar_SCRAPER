@@ -49,6 +49,10 @@ func main() {
 	// 	fmt.Println(i, name)
 	// })
 
+	// SAVES
+	// scraper.FindAttr("a [href]", "href").Save()
+	// scraper.Find("div .title").Save()
+
 	// Enter TagStr and regex. We find the value for you.
 	// scraper.FindWithRegex("body", `\d{11}`).Each(func(i int, name string) {
 	// 	fmt.Println(i, name)
