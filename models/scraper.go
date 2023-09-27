@@ -233,9 +233,6 @@ func (s *Scraper) findEndIndex(start int) int {
 					tagCount++
 				}
 
-				// EĞER </footer></body> gelirse 1 kere tagcountu azaltıyor o da hata çıkarıyor
-				// DÜZELT
-
 				// Eğer gelen satırda </ var ise tagcount'u da azalt yine
 				if strings.Contains(s.body[i], "</") {
 					tagCount--
@@ -244,7 +241,13 @@ func (s *Scraper) findEndIndex(start int) int {
 				// Eğer </ ise kapanışş tag'ıdır.
 			} else if strings.HasPrefix(tag, "</") {
 				// Kapalı etiket
-				tagCount--
+
+				// EĞER </footer></body> gelirse 1 kere tagcountu azaltıyor o da hata çıkarıyor
+				// DÜZELT
+				// Alttaki o hatayı düzeliyor olabilir.
+
+				count := strings.Count(tag, "</")
+				tagCount -= count
 			}
 
 			// TagCount 0 ise kapanış tagını buldun.

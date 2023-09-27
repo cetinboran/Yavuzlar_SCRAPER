@@ -44,6 +44,7 @@ func main() {
 	// 	fmt.Println(i, name)
 	// })
 
+	// Returns Attr Value
 	// scraper.FindAttr("a [href]", "href").Each(func(i int, name string) {
 	// 	fmt.Println(i, name)
 	// })
