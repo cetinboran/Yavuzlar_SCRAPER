@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -70,10 +69,15 @@ func createTag(tagStr string) *Tag {
 	newTag.attribute = strings.Split(attribute, " ")
 	newTag.id = id
 
+	// Eğer attribute ve classes == "" ise hiç bişi gelmemiştir
+	// ben " " ile splitlediğimden hata oluyor o yüzden bunu yapıyorum şimdilik.
 	if attribute == "" {
 		newTag.attribute = []string{}
 	}
 
-	fmt.Println(newTag)
+	if classes == "" {
+		newTag.class = []string{}
+	}
+
 	return newTag
 }

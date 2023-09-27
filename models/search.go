@@ -48,7 +48,13 @@ func (s *Search) createRegex(t Tag) {
 	regex += `[^>]*>`
 
 	s.StartReg = regex
-	fmt.Println(regex)
+}
+
+func (s *Search) getAttributeRegex(attribute string) string {
+	// <[^>]*href="[^>]*"[^>]*>
+	regex := `<[^>]*` + attribute + `="[^>]*"[^>]*>`
+
+	return regex
 }
 
 func (s *Search) RegexCheck(t Tag, data string) bool {

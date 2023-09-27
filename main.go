@@ -35,13 +35,15 @@ func main() {
 	tag.SetClasses("description")
 
 	// Tag objesi ile arama.
-	scraper.Q(*tag).Each(func(i int, name string) {
-		fmt.Println(i, name)
-	})
+	// scraper.FindWithTag(*tag).Each(func(i int, name string) {
+	// 	fmt.Println(i, name)
+	// })
 
 	fmt.Println()
 
-	scraper.FindLinks()
+	scraper.FindLinks().Each(func(i int, name string) {
+		fmt.Println(i, name)
+	})
 
 	// Düz Arama
 	// scraper.Find("div .title").Each(func(i int, name string) {

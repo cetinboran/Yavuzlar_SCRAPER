@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -44,48 +43,58 @@ func (s *Scraper) getText(start, end int) string {
 	return strings.Join(data, "\n")
 }
 
-func (s *Scraper) GetIndexes(tag Tag) [][]int {
-	tag.Search.setSearch(tag)
+func (s *Scraper) getAttribute(start, end int, attrRegex string) string {
+	body := strings.Join(s.body[start:end], "")
 
-	var indexMatrix [][]int
-	var i int
-	for i < len(s.body) {
-		if tag.Search.RegexCheck(tag, s.body[i]) {
-			var indexes []int
+	re := regexp.MustCompile(attrRegex)
+	matches := re.FindAllStringSubmatch(body, -1)
 
-			startIndex := i
-			endIndex := s.findEndIndex(startIndex)
+	var data string
+	for _, match := range matches {
+		matchPieces := strings.Split(match[0], " ")
 
-			indexes = append(indexes, i)
-			if startIndex == endIndex {
-				indexes = append(indexes, startIndex+1)
-			} else {
-				indexes = append(indexes, endIndex)
+		for _, v := range matchPieces {
+			href, has := strings.CutPrefix(v, "href=")
+			if has {
+				href = strings.ReplaceAll(href, ">", "")
+				href = strings.ReplaceAll(href, "\"", "")
+
+				href = strings.TrimSpace(href)
+
+				data = href
 			}
-
-			indexMatrix = append(indexMatrix, indexes)
 		}
-
-		i++
 	}
 
-	return indexMatrix
+	return data
 }
 
-func (s *Scraper) FindLinks() {
-	tagStr := "div .title"
+func (s *Scraper) FindLinks() *Collector {
+	tagStr := "a [href]"
 	tag := createTag(tagStr)
-	// s.FindWithTag()
+
+	newCollector := collectorInit()
+	newCollector.setSearched(*tag)
+
+	//  Bu içeride setSearched(tag) işleini yapıyor
+	// Oradan çıkan bilgilere göre buluyor indexleri
 
 	indexes := s.GetIndexes(*tag)
+	attrRegex := tag.Search.getAttributeRegex("href")
 
 	for _, v := range indexes {
 		start := v[0]
 		end := v[1]
 
-		d := s.getText(start, end)
-		fmt.Println(d)
+		data := s.getAttribute(start, end, attrRegex)
+
+		newCollector.setData(data)
 	}
+
+	s.autoSave()
+
+	s.Collected = append(s.Collected, *newCollector)
+	return &s.Collected[len(s.Collected)-1]
 }
 
 func (s *Scraper) FindWithTag(tag Tag) *Collector {
@@ -176,6 +185,34 @@ func (s *Scraper) findEndIndex(start int) int {
 	}
 
 	return -1
+}
+
+func (s *Scraper) GetIndexes(tag Tag) [][]int {
+	tag.Search.setSearch(tag)
+
+	var indexMatrix [][]int
+	var i int
+	for i < len(s.body) {
+		if tag.Search.RegexCheck(tag, s.body[i]) {
+			var indexes []int
+
+			startIndex := i
+			endIndex := s.findEndIndex(startIndex)
+
+			indexes = append(indexes, i)
+			if startIndex == endIndex {
+				indexes = append(indexes, startIndex+1)
+			} else {
+				indexes = append(indexes, endIndex)
+			}
+
+			indexMatrix = append(indexMatrix, indexes)
+		}
+
+		i++
+	}
+
+	return indexMatrix
 }
 
 func (s *Scraper) autoSave() {
