@@ -1,4 +1,4 @@
-module github.com/cetinboran/yavuzlarscraper
+module github.com/cetinboran/scraperGo
 
 go 1.21.1
 
