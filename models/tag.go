@@ -5,7 +5,7 @@ import (
 )
 
 func TagInit() *Tag {
-	return &Tag{search: SearchInit()}
+	return &Tag{search: searchInit()}
 }
 
 func (t *Tag) SetName(name string) {
@@ -31,7 +31,7 @@ func (t *Tag) setSearch() {
 func createTag(tagStr string) *Tag {
 	// .selam .title #la div böyle düz olsun
 
-	newTag := &Tag{search: SearchInit()}
+	newTag := &Tag{search: searchInit()}
 	var tagName, classes, attribute, id string
 
 	pieces := strings.Split(tagStr, " ")

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func SearchInit() *Search {
+func searchInit() *Search {
 	return &Search{}
 }
 
