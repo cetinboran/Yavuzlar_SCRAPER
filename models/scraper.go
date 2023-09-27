@@ -166,15 +166,15 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 	return &s.collected[len(s.collected)-1]
 }
 
-func (s *Scraper) FindWithTag(tag Tag) *Collector {
+func (s *Scraper) FindWithTag(tag *Tag) *Collector {
 	newCollector := collectorInit(*s.database.Tables["Collection"], *s.config)
-	newCollector.setSearched(tag)
+	newCollector.setSearched(*tag)
 
 	// Burada setSearch ile search'ın içeriğini dolduruyorum.
 	// Regex'leri end tagleri oluşturuyorum.
-	tag.search.setSearch(tag)
+	tag.search.setSearch(*tag)
 
-	indexes := s.getIndexes(tag)
+	indexes := s.getIndexes(*tag)
 
 	for _, v := range indexes {
 		start := v[0]
@@ -199,7 +199,7 @@ func (s *Scraper) FindWithTag(tag Tag) *Collector {
 func (s *Scraper) Find(tagStr string) *Collector {
 	newTag := createTag(tagStr)
 
-	return s.FindWithTag(*newTag)
+	return s.FindWithTag(newTag)
 }
 
 func (s *Scraper) findEndIndex(start int) int {
