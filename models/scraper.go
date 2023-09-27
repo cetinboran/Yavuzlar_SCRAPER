@@ -43,7 +43,7 @@ func (s *Scraper) getText(start, end int) string {
 	return strings.Join(data, "\n")
 }
 
-func (s *Scraper) getAttribute(start, end int, attrRegex string) string {
+func (s *Scraper) getAttribute(start, end int, attr, attrRegex string) string {
 	body := strings.Join(s.body[start:end], "")
 
 	re := regexp.MustCompile(attrRegex)
@@ -54,14 +54,14 @@ func (s *Scraper) getAttribute(start, end int, attrRegex string) string {
 		matchPieces := strings.Split(match[0], " ")
 
 		for _, v := range matchPieces {
-			href, has := strings.CutPrefix(v, "href=")
+			attrPiece, has := strings.CutPrefix(v, attr+"=")
 			if has {
-				href = strings.ReplaceAll(href, ">", "")
-				href = strings.ReplaceAll(href, "\"", "")
+				attrPiece = strings.ReplaceAll(attrPiece, ">", "")
+				attrPiece = strings.ReplaceAll(attrPiece, "\"", "")
 
-				href = strings.TrimSpace(href)
+				attrPiece = strings.TrimSpace(attrPiece)
 
-				data = href
+				data = attrPiece
 			}
 		}
 	}
@@ -71,22 +71,26 @@ func (s *Scraper) getAttribute(start, end int, attrRegex string) string {
 
 func (s *Scraper) FindLinks() *Collector {
 	tagStr := "a [href]"
+	return s.FindAttr(tagStr, "href")
+}
+
+func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
+	// Girilen tagı buluyoruz
+	// Onun içindeki girilen attr'nin değerini buluyoruz.
+
 	tag := createTag(tagStr)
+	attrRegex := tag.Search.getAttributeRegex(attr)
 
 	newCollector := collectorInit()
 	newCollector.setSearched(*tag)
 
-	//  Bu içeride setSearched(tag) işleini yapıyor
-	// Oradan çıkan bilgilere göre buluyor indexleri
-
 	indexes := s.GetIndexes(*tag)
-	attrRegex := tag.Search.getAttributeRegex("href")
 
 	for _, v := range indexes {
 		start := v[0]
 		end := v[1]
 
-		data := s.getAttribute(start, end, attrRegex)
+		data := s.getAttribute(start, end, attr, attrRegex)
 
 		newCollector.setData(data)
 	}
