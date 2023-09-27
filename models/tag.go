@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -16,6 +17,10 @@ func (t *Tag) SetClasses(classes string) {
 	t.class = strings.Split(classes, ",")
 }
 
+func (t *Tag) SetAttiributes(attribute string) {
+	t.attribute = strings.Split(attribute, ",")
+}
+
 func (t *Tag) SetId(id string) {
 	t.id = id
 }
@@ -28,7 +33,7 @@ func createTag(tagStr string) *Tag {
 	// .selam .title #la div böyle düz olsun
 
 	newTag := &Tag{Search: SearchInit()}
-	var tagName, classes, id string
+	var tagName, classes, attribute, id string
 
 	pieces := strings.Split(tagStr, " ")
 
@@ -45,16 +50,30 @@ func createTag(tagStr string) *Tag {
 			id = v
 		}
 
-		if !strings.HasPrefix(v, "#") && !strings.HasPrefix(v, ".") {
+		if strings.HasPrefix(v, "[") && strings.HasSuffix(v, "]") {
+			withOutLeft := strings.ReplaceAll(v, "[", "")
+			attributeStr := strings.ReplaceAll(withOutLeft, "]", "")
+
+			attribute += attributeStr + " "
+		}
+
+		if !strings.HasPrefix(v, "#") && !strings.HasPrefix(v, ".") && !strings.HasPrefix(v, "[") && !strings.HasSuffix(v, "]") {
 			tagName = v
 		}
 	}
 
 	classes = strings.TrimSpace(classes)
+	attribute = strings.TrimSpace(attribute)
 
 	newTag.Name = tagName
 	newTag.class = strings.Split(classes, " ")
+	newTag.attribute = strings.Split(attribute, " ")
 	newTag.id = id
 
+	if attribute == "" {
+		newTag.attribute = []string{}
+	}
+
+	fmt.Println(newTag)
 	return newTag
 }

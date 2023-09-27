@@ -14,10 +14,11 @@ type Config struct {
 }
 
 type Tag struct {
-	Name   string
-	id     string
-	class  []string
-	Search *Search
+	Name      string
+	id        string
+	attribute []string
+	class     []string
+	Search    *Search
 }
 
 type Search struct {

@@ -35,9 +35,9 @@ func main() {
 	tag.SetClasses("description")
 
 	// Tag objesi ile arama.
-	scraper.FindWithTag(*tag).Each(func(i int, name string) {
-		fmt.Println(i, name)
-	})
+	// scraper.FindWithTag(*tag).Each(func(i int, name string) {
+	// 	fmt.Println(i, name)
+	// })
 
 	fmt.Println()
 

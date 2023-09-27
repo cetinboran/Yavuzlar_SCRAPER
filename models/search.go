@@ -25,6 +25,13 @@ func (s *Search) createRegex(t Tag) {
 		regex += t.Name
 	}
 
+	if len(t.attribute) > 0 {
+
+		for _, v := range t.attribute {
+			regex += `[^>]*` + v
+		}
+	}
+
 	if len(t.class) > 0 {
 		classes := strings.Join(t.class, " ")
 
@@ -41,6 +48,7 @@ func (s *Search) createRegex(t Tag) {
 	regex += `[^>]*>`
 
 	s.StartReg = regex
+	fmt.Println(regex)
 }
 
 func (s *Search) RegexCheck(t Tag, data string) bool {
