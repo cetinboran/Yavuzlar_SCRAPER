@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cetinboran/yavuzlarscraper/models"
+	"github.com/cetinboran/scrapergo/models"
 )
 
 func BodyReader(body io.ReadCloser) (*models.Scraper, error) {

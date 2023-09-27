@@ -1,4 +1,4 @@
-module github.com/cetinboran/scraperGo
+module github.com/cetinboran/scrapergo
 
 go 1.21.1
 

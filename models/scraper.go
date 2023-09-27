@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/cetinboran/gojson/gojson"
-	"github.com/cetinboran/yavuzlarscraper/database"
+	"github.com/cetinboran/scrapergo/database"
 )
 
 func ScraperInit() *Scraper {
