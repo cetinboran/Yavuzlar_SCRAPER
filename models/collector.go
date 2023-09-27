@@ -55,6 +55,6 @@ func (c *Collector) Each(f Each) {
 	}
 
 	for i, v := range clearData {
-		f(i, v)
+		f(i+1, v)
 	}
 }

@@ -44,12 +44,22 @@ func main() {
 	// 	fmt.Println(i, name)
 	// })
 
-	scraper.FindAttr("a [href]", "href").Each(func(i int, name string) {
-		fmt.Println(i, name)
-	})
+	// scraper.FindAttr("a [href]", "href").Each(func(i int, name string) {
+	// 	fmt.Println(i, name)
+	// })
+
+	// Enter TagStr and regex. We find the value for you.
+	// scraper.FindWithRegex("body", `\d{11}`).Each(func(i int, name string) {
+	// 	fmt.Println(i, name)
+	// })
 
 	// FIND LINKS
 	// scraper.FindLinks().Each(func(i int, name string) {
+	// 	fmt.Println(i, name)
+	// })
+
+	// FIND EMAILS
+	// scraper.FindEmails().Each(func(i int, name string) {
 	// 	fmt.Println(i, name)
 	// })
 }

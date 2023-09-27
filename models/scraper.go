@@ -44,6 +44,25 @@ func (s *Scraper) getText(start, end int) string {
 	return strings.Join(data, "\n")
 }
 
+func (s *Scraper) getSpesificText(start, end int, regex string) string {
+	// Gelen parçayı alıyorum string çeviriyorum.
+	body := s.body[start:end]
+
+	// Bu regex ile html tagları hariç olanları alıyorum.
+	reg := regexp.MustCompile(regex)
+
+	var data []string
+	for i := start; i <= len(body)-1; i++ {
+		tag := reg.FindString(body[i])
+		if tag != "" {
+			tag = strings.ReplaceAll(tag, " ", "")
+			data = append(data, tag)
+		}
+	}
+
+	return strings.Join(data, "\n")
+}
+
 func (s *Scraper) getAttribute(start, end int, attr, attrRegex string) string {
 	body := strings.Join(s.body[start:end], "")
 
@@ -75,6 +94,41 @@ func (s *Scraper) FindLinks() *Collector {
 	return s.FindAttr(tagStr, "href")
 }
 
+func (s *Scraper) FindWithRegex(tagStr string, regex string) *Collector {
+	tag := createTag(tagStr)
+
+	newCollector := collectorInit()
+	newCollector.setSearched(*tag)
+
+	indexes := s.GetIndexes(*tag)
+
+	for _, v := range indexes {
+		start := v[0]
+		end := v[1]
+
+		data := s.getSpesificText(start, end, regex)
+		if data != "" {
+			newCollector.setData(data)
+		}
+
+	}
+
+	newCollector.readableData()
+	s.Collected = append(s.Collected, *newCollector)
+
+	// Array'e eklemeden yaparsak auto save atmaz.
+	s.autoSave()
+
+	return &s.Collected[len(s.Collected)-1]
+}
+
+func (s *Scraper) FindEmails() *Collector {
+	regex := `>[^>]*@[^>]*\..+<`
+	tagStr := "body"
+
+	return s.FindWithRegex(tagStr, regex)
+}
+
 func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 	// Girilen tagı buluyoruz
 	// Onun içindeki girilen attr'nin değerini buluyoruz.
@@ -93,7 +147,9 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 
 		data := s.getAttribute(start, end, attr, attrRegex)
 
-		newCollector.setData(data)
+		if data != "" {
+			newCollector.setData(data)
+		}
 	}
 
 	newCollector.readableData()
@@ -121,7 +177,9 @@ func (s *Scraper) FindWithTag(tag Tag) *Collector {
 
 		data := s.getText(start, end)
 
-		newCollector.setData(data)
+		if data != "" {
+			newCollector.setData(data)
+		}
 	}
 
 	newCollector.readableData()
@@ -174,6 +232,9 @@ func (s *Scraper) findEndIndex(start int) int {
 				if !has {
 					tagCount++
 				}
+
+				// EĞER </footer></body> gelirse 1 kere tagcountu azaltıyor o da hata çıkarıyor
+				// DÜZELT
 
 				// Eğer gelen satırda </ var ise tagcount'u da azalt yine
 				if strings.Contains(s.body[i], "</") {
