@@ -14,6 +14,19 @@ func (c *Collector) setData(data string) {
 	c.data = append(c.data, data)
 }
 
+// Changes collector data with user readable data
+func (c *Collector) readableData() {
+	var newDataArr []string
+
+	for _, v := range c.data {
+		for _, v2 := range strings.Split(v, "\n") {
+			newDataArr = append(newDataArr, v2)
+		}
+	}
+
+	c.data = newDataArr
+}
+
 func (c *Collector) setSearched(tag Tag) {
 	searched := tag.Name
 

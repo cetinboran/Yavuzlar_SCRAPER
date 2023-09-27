@@ -39,15 +39,17 @@ func main() {
 	// 	fmt.Println(i, name)
 	// })
 
-	fmt.Println()
-
-	scraper.FindLinks().Each(func(i int, name string) {
-		fmt.Println(i, name)
-	})
-
 	// Düz Arama
 	// scraper.Find("div .title").Each(func(i int, name string) {
 	// 	fmt.Println(i, name)
 	// })
 
+	scraper.FindAttr("a [href]", "href").Each(func(i int, name string) {
+		fmt.Println(i, name)
+	})
+
+	// FIND LINKS
+	// scraper.FindLinks().Each(func(i int, name string) {
+	// 	fmt.Println(i, name)
+	// })
 }

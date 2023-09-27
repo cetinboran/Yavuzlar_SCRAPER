@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -95,9 +96,12 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 		newCollector.setData(data)
 	}
 
+	newCollector.readableData()
+	s.Collected = append(s.Collected, *newCollector)
+
+	// Array'e eklemeden yaparsak auto save atmaz.
 	s.autoSave()
 
-	s.Collected = append(s.Collected, *newCollector)
 	return &s.Collected[len(s.Collected)-1]
 }
 
@@ -120,9 +124,12 @@ func (s *Scraper) FindWithTag(tag Tag) *Collector {
 		newCollector.setData(data)
 	}
 
+	newCollector.readableData()
+	s.Collected = append(s.Collected, *newCollector)
+
+	// Array'e eklemeden yaparsak auto save atmaz.
 	s.autoSave()
 
-	s.Collected = append(s.Collected, *newCollector)
 	return &s.Collected[len(s.Collected)-1]
 }
 
@@ -229,18 +236,11 @@ func (s *Scraper) Save() {
 	CollectionTable := s.database.Tables["Collection"]
 	CollectionTable.Reset() // Önce içeriği siliyorum sonra tekrar yazıyorum.
 
+	fmt.Println(s.Collected)
 	for _, c := range s.Collected {
-		var newDataArr []string
+		c.readableData()
 
-		for _, v := range c.data {
-			for _, v2 := range strings.Split(v, "\n") {
-				newDataArr = append(newDataArr, v2)
-			}
-		}
-
-		newData := gojson.DataInit([]string{"Searched", "Findings"}, []interface{}{c.searched, newDataArr}, CollectionTable)
+		newData := gojson.DataInit([]string{"Searched", "Findings"}, []interface{}{c.searched, c.data}, CollectionTable)
 		CollectionTable.Save(newData)
 	}
-
-	// Yaptıkları aramaya göre save atıcam json'a
 }
