@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -12,6 +11,12 @@ import (
 func ScraperInit() *Scraper {
 	// gojsondan aldığım db yi koyuyorum kayıt işlemleri buraya olucak.
 	db := database.DBStart()
+
+	// Buradaki reset autoSave açık ise işimize yarıyor
+	// Her go run yaptığımda save atarsa önceki verileri silmek daha iyi
+	// Yoksa üstüne append atar
+
+	db.Tables["Collection"].Reset()
 
 	return &Scraper{config: configInit(), database: &db}
 }
@@ -97,7 +102,7 @@ func (s *Scraper) FindLinks() *Collector {
 func (s *Scraper) FindWithRegex(tagStr string, regex string) *Collector {
 	tag := createTag(tagStr)
 
-	newCollector := collectorInit()
+	newCollector := collectorInit(*s.database.Tables["Collection"])
 	newCollector.setSearched(*tag)
 
 	indexes := s.GetIndexes(*tag)
@@ -136,7 +141,7 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 	tag := createTag(tagStr)
 	attrRegex := tag.Search.getAttributeRegex(attr)
 
-	newCollector := collectorInit()
+	newCollector := collectorInit(*s.database.Tables["Collection"])
 	newCollector.setSearched(*tag)
 
 	indexes := s.GetIndexes(*tag)
@@ -162,7 +167,7 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 }
 
 func (s *Scraper) FindWithTag(tag Tag) *Collector {
-	newCollector := collectorInit()
+	newCollector := collectorInit(*s.database.Tables["Collection"])
 	newCollector.setSearched(tag)
 
 	// Burada setSearch ile search'ın içeriğini dolduruyorum.
@@ -298,9 +303,11 @@ func (s *Scraper) autoSave() {
 
 func (s *Scraper) Save() {
 	CollectionTable := s.database.Tables["Collection"]
-	CollectionTable.Reset() // Önce içeriği siliyorum sonra tekrar yazıyorum.
 
-	fmt.Println(s.Collected)
+	// Eğer scraepper içinde bütün datayı en baştan kaydediceksem
+	// Önce table'ı resetliyorum.
+	CollectionTable.Reset()
+
 	for _, c := range s.Collected {
 		c.readableData()
 

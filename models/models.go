@@ -29,4 +29,5 @@ type Search struct {
 type Collector struct {
 	searched string
 	data     []string
+	Table    gojson.Table
 }

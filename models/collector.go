@@ -2,12 +2,14 @@ package models
 
 import (
 	"strings"
+
+	"github.com/cetinboran/gojson/gojson"
 )
 
 type Each func(i int, name string)
 
-func collectorInit() *Collector {
-	return &Collector{}
+func collectorInit(table gojson.Table) *Collector {
+	return &Collector{Table: table}
 }
 
 func (c *Collector) setData(data string) {
@@ -57,4 +59,15 @@ func (c *Collector) Each(f Each) {
 	for i, v := range clearData {
 		f(i+1, v)
 	}
+}
+
+// Saves Data to the collection table
+func (c *Collector) Save() {
+	c.readableData()
+
+	newData := gojson.DataInit([]string{"Searched", "Findings"}, []interface{}{c.searched, c.data}, &c.Table)
+	c.Table.Save(newData)
+
+	// Buraya eğer açık ise bunu yazabilirim şimdilik gerek yok.
+	// log.Fatal("Automatic recording is on. It is recommended to turn it off when using this function.")
 }
