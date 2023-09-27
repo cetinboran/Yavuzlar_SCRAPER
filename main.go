@@ -32,7 +32,7 @@ func main() {
 
 	tag := models.TagInit()
 	tag.SetName("div")
-	tag.SetClasses("description")
+	tag.SetClasses("title")
 
 	// Tag objesi ile arama.
 	// scraper.FindWithTag(tag).Each(func(i int, name string) {
@@ -40,7 +40,7 @@ func main() {
 	// })
 
 	// Düz Arama
-	// scraper.Find("div .title").Each(func(i int, name string) {
+	// scraper.Find("div .description").Each(func(i int, name string) {
 	// 	fmt.Println(i, name)
 	// })
 
