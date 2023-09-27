@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -43,6 +44,50 @@ func (s *Scraper) getText(start, end int) string {
 	return strings.Join(data, "\n")
 }
 
+func (s *Scraper) GetIndexes(tag Tag) [][]int {
+	tag.Search.setSearch(tag)
+
+	var indexMatrix [][]int
+	var i int
+	for i < len(s.body) {
+		if tag.Search.RegexCheck(tag, s.body[i]) {
+			var indexes []int
+
+			startIndex := i
+			endIndex := s.findEndIndex(startIndex)
+
+			indexes = append(indexes, i)
+			if startIndex == endIndex {
+				indexes = append(indexes, startIndex+1)
+			} else {
+				indexes = append(indexes, endIndex)
+			}
+
+			indexMatrix = append(indexMatrix, indexes)
+		}
+
+		i++
+	}
+
+	return indexMatrix
+}
+
+func (s *Scraper) FindLinks() {
+	tagStr := "div .title"
+	tag := createTag(tagStr)
+	// s.FindWithTag()
+
+	indexes := s.GetIndexes(*tag)
+
+	for _, v := range indexes {
+		start := v[0]
+		end := v[1]
+
+		d := s.getText(start, end)
+		fmt.Println(d)
+	}
+}
+
 func (s *Scraper) FindWithTag(tag Tag) *Collector {
 	newCollector := collectorInit()
 	newCollector.setSearched(tag)
@@ -51,25 +96,15 @@ func (s *Scraper) FindWithTag(tag Tag) *Collector {
 	// Regex'leri end tagleri oluşturuyorum.
 	tag.Search.setSearch(tag)
 
-	var i int
-	for i < len(s.body) {
-		if tag.Search.RegexCheck(tag, s.body[i]) {
+	indexes := s.GetIndexes(tag)
 
-			startIndex := i
-			endIndex := s.findEndIndex(startIndex)
+	for _, v := range indexes {
+		start := v[0]
+		end := v[1]
 
-			var data string
-			if endIndex == startIndex {
-				// Burası eğer input felan arıyorsa giricek.
-				data = s.getText(startIndex, startIndex+1)
-			} else {
-				data = s.getText(startIndex, endIndex)
-			}
+		data := s.getText(start, end)
 
-			newCollector.setData(data)
-		}
-
-		i++
+		newCollector.setData(data)
 	}
 
 	s.autoSave()
