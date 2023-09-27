@@ -17,9 +17,9 @@
     + `SetClasses()`: You add class to the tag. Comma separator.
     + `SetId()`: You can add the id to the tag.
     + `SetAttiributes()`: You can add the id to the tag. Comma separator.
-+ Collector:
++ Collection:
     + `Each(func (i int, name string){})`: Loops through the data you found.
-    + `GetData()`: Returns the data you found.
+    + `Get()`: Returns the data you found.
     + `Save()`: Saves the data into collection.json. You cannot use this function if AutoSave is true.
 
 # TagStr Format
@@ -37,17 +37,18 @@
         + [value]
 
 # Scraper Functions
++ `scraper.Get() []Collection`: Returns all the collection that added.
 + `scraper.Use(c Config)`:
     + You can add any config settings you want with this function. If you don't use the default config will be used
-+ `scraper.FindWithTag(t Tag)`:
++ `scraper.FindWithTag(t Tag) *Collection`:
     + This function takes a tag object and performs a search based on the tag name, classes, and ID added to this tag object.
-+ `scraper.Find(tagStr string)`:
++ `scraper.Find(tagStr string) *Collection`:
     + This function takes a tagStr string and search based on that.
-+ `scraper.FindAttr(tagStr string, attr string)`:
++ `scraper.FindAttr(tagStr string, attr string) *Collection`:
     + This function takes the first parameter as tagStr, and in the second parameter, you specify the attribute you want to find. For example, if you write "a [href]", it will search for tags with the attribute "href" within the "a" tags. If you specify "href" as the second parameter, it will return the values of the "href" attribute found in the tags it discovers.
-+ `scraper.FindWithRegex(tagStr string, regex string)`:
++ `scraper.FindWithRegex(tagStr string, regex string) *Collection`:
     + This function takes the first parameter as tagStr, and the second parameter is a regular expression (regex). Once a tag is created based on the first argument, it searches within these tags for values that match the provided regex in the second argument. For example, if you input 'body' and '\d{11}' as arguments, it will return any sequences of 11 consecutive digits found within the body tag.
-+ `scraper.FindLinks(), scraper.FindEmails()`:
++ `scraper.FindLinks(), scraper.FindEmails() *Collection`:
     + This is a shortcut method that provides ready-made functionality for finding links within the content. You can achieve similar results using the functions mentioned above, but this one is specifically designed for conveniently finding links.
 
 

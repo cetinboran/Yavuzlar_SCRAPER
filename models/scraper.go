@@ -29,6 +29,10 @@ func (s *Scraper) SetConfig(config *Config) {
 	s.config = config
 }
 
+func (s *Scraper) Get() []Collection {
+	return s.collected
+}
+
 func (s *Scraper) getText(start, end int) string {
 	// Bu kısımda aranan tag'ın içindeki veriyi tek string olarak ekliyorum collector'a
 
@@ -94,16 +98,16 @@ func (s *Scraper) getAttribute(start, end int, attr, attrRegex string) string {
 	return data
 }
 
-func (s *Scraper) FindLinks() *Collector {
+func (s *Scraper) FindLinks() *Collection {
 	tagStr := "a [href]"
 	return s.FindAttr(tagStr, "href")
 }
 
-func (s *Scraper) FindWithRegex(tagStr string, regex string) *Collector {
+func (s *Scraper) FindWithRegex(tagStr string, regex string) *Collection {
 	tag := createTag(tagStr)
 
-	newCollector := collectorInit(*s.database.Tables["Collection"], *s.config)
-	newCollector.setSearched(*tag)
+	newCollection := collectionInit(*s.database.Tables["Collection"], *s.config)
+	newCollection.setSearched(*tag)
 
 	indexes := s.getIndexes(*tag)
 
@@ -113,13 +117,13 @@ func (s *Scraper) FindWithRegex(tagStr string, regex string) *Collector {
 
 		data := s.getSpesificText(start, end, regex)
 		if data != "" {
-			newCollector.setData(data)
+			newCollection.setData(data)
 		}
 
 	}
 
-	newCollector.readableData()
-	s.collected = append(s.collected, *newCollector)
+	newCollection.readableData()
+	s.collected = append(s.collected, *newCollection)
 
 	// Array'e eklemeden yaparsak auto save atmaz.
 	s.autoSave()
@@ -127,22 +131,22 @@ func (s *Scraper) FindWithRegex(tagStr string, regex string) *Collector {
 	return &s.collected[len(s.collected)-1]
 }
 
-func (s *Scraper) FindEmails() *Collector {
+func (s *Scraper) FindEmails() *Collection {
 	regex := `>[^>]*@[^>]*\..+<`
 	tagStr := "body"
 
 	return s.FindWithRegex(tagStr, regex)
 }
 
-func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
+func (s *Scraper) FindAttr(tagStr, attr string) *Collection {
 	// Girilen tagı buluyoruz
 	// Onun içindeki girilen attr'nin değerini buluyoruz.
 
 	tag := createTag(tagStr)
 	attrRegex := tag.search.getAttributeRegex(attr)
 
-	newCollector := collectorInit(*s.database.Tables["Collection"], *s.config)
-	newCollector.setSearched(*tag)
+	newCollection := collectionInit(*s.database.Tables["Collection"], *s.config)
+	newCollection.setSearched(*tag)
 
 	indexes := s.getIndexes(*tag)
 
@@ -153,12 +157,12 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 		data := s.getAttribute(start, end, attr, attrRegex)
 
 		if data != "" {
-			newCollector.setData(data)
+			newCollection.setData(data)
 		}
 	}
 
-	newCollector.readableData()
-	s.collected = append(s.collected, *newCollector)
+	newCollection.readableData()
+	s.collected = append(s.collected, *newCollection)
 
 	// Array'e eklemeden yaparsak auto save atmaz.
 	s.autoSave()
@@ -166,9 +170,9 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 	return &s.collected[len(s.collected)-1]
 }
 
-func (s *Scraper) FindWithTag(tag *Tag) *Collector {
-	newCollector := collectorInit(*s.database.Tables["Collection"], *s.config)
-	newCollector.setSearched(*tag)
+func (s *Scraper) FindWithTag(tag *Tag) *Collection {
+	newCollection := collectionInit(*s.database.Tables["Collection"], *s.config)
+	newCollection.setSearched(*tag)
 
 	// Burada setSearch ile search'ın içeriğini dolduruyorum.
 	// Regex'leri end tagleri oluşturuyorum.
@@ -183,12 +187,12 @@ func (s *Scraper) FindWithTag(tag *Tag) *Collector {
 		data := s.getText(start, end)
 
 		if data != "" {
-			newCollector.setData(data)
+			newCollection.setData(data)
 		}
 	}
 
-	newCollector.readableData()
-	s.collected = append(s.collected, *newCollector)
+	newCollection.readableData()
+	s.collected = append(s.collected, *newCollection)
 
 	// Array'e eklemeden yaparsak auto save atmaz.
 	s.autoSave()
@@ -196,7 +200,7 @@ func (s *Scraper) FindWithTag(tag *Tag) *Collector {
 	return &s.collected[len(s.collected)-1]
 }
 
-func (s *Scraper) Find(tagStr string) *Collector {
+func (s *Scraper) Find(tagStr string) *Collection {
 	newTag := createTag(tagStr)
 
 	return s.FindWithTag(newTag)

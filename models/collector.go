@@ -10,18 +10,18 @@ import (
 // Loop Through Data
 type Each func(i int, name string)
 
-func collectorInit(table gojson.Table, config Config) *Collector {
-	// Scrapper dan aldığım config dosyasını collectorlarda kullanabilmek için ekliorm.
+func collectionInit(table gojson.Table, config Config) *Collection {
+	// Scrapper dan aldığım config dosyasını Collectionlarda kullanabilmek için ekliorm.
 
-	return &Collector{table: table, config: config}
+	return &Collection{table: table, config: config}
 }
 
-func (c *Collector) setData(data string) {
+func (c *Collection) setData(data string) {
 	c.data = append(c.data, data)
 }
 
-// Changes collector data with user readable data
-func (c *Collector) readableData() {
+// Changes Collection data with user readable data
+func (c *Collection) readableData() {
 	var newDataArr []string
 
 	for _, v := range c.data {
@@ -33,7 +33,7 @@ func (c *Collector) readableData() {
 	c.data = newDataArr
 }
 
-func (c *Collector) setSearched(tag Tag) {
+func (c *Collection) setSearched(tag Tag) {
 	searched := tag.name
 
 	if len(tag.class) > 0 {
@@ -47,11 +47,11 @@ func (c *Collector) setSearched(tag Tag) {
 	c.searched = searched
 }
 
-func (c *Collector) GetData() []string {
+func (c *Collection) Get() []string {
 	return c.data
 }
 
-func (c *Collector) Each(f Each) {
+func (c *Collection) Each(f Each) {
 	var clearData []string
 
 	for _, v := range c.data {
@@ -66,11 +66,11 @@ func (c *Collector) Each(f Each) {
 }
 
 // Saves Data to the collection table
-func (c *Collector) Save() {
+func (c *Collection) Save() {
 	c.readableData()
 
 	if c.config.AutoSave {
-		log.Fatal("Automatic Save is on. It is recommended to turn it off when using this collector's save function.")
+		log.Fatal("Automatic Save is on. It is recommended to turn it off when using this Collection's save function.")
 	}
 
 	newData := gojson.DataInit([]string{"Searched", "Findings"}, []interface{}{c.searched, c.data}, &c.table)
