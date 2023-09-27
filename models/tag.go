@@ -5,11 +5,11 @@ import (
 )
 
 func TagInit() *Tag {
-	return &Tag{Search: SearchInit()}
+	return &Tag{search: SearchInit()}
 }
 
 func (t *Tag) SetName(name string) {
-	t.Name = name
+	t.name = name
 }
 
 func (t *Tag) SetClasses(classes string) {
@@ -25,13 +25,13 @@ func (t *Tag) SetId(id string) {
 }
 
 func (t *Tag) setSearch() {
-	t.Search.setSearch(*t)
+	t.search.setSearch(*t)
 }
 
 func createTag(tagStr string) *Tag {
 	// .selam .title #la div böyle düz olsun
 
-	newTag := &Tag{Search: SearchInit()}
+	newTag := &Tag{search: SearchInit()}
 	var tagName, classes, attribute, id string
 
 	pieces := strings.Split(tagStr, " ")
@@ -64,7 +64,7 @@ func createTag(tagStr string) *Tag {
 	classes = strings.TrimSpace(classes)
 	attribute = strings.TrimSpace(attribute)
 
-	newTag.Name = tagName
+	newTag.name = tagName
 	newTag.class = strings.Split(classes, " ")
 	newTag.attribute = strings.Split(attribute, " ")
 	newTag.id = id

@@ -4,7 +4,7 @@ import "github.com/cetinboran/gojson/gojson"
 
 type Scraper struct {
 	body      []string
-	Collected []Collector
+	collected []Collector
 	database  *gojson.Database
 	config    *Config
 }
@@ -14,11 +14,11 @@ type Config struct {
 }
 
 type Tag struct {
-	Name      string
+	name      string
 	id        string
 	attribute []string
 	class     []string
-	Search    *Search
+	search    *Search
 }
 
 type Search struct {
@@ -29,5 +29,6 @@ type Search struct {
 type Collector struct {
 	searched string
 	data     []string
-	Table    gojson.Table
+	table    gojson.Table
+	config   Config
 }

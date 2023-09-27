@@ -21,8 +21,8 @@ func (s *Search) createRegex(t Tag) {
 	regex := "<"
 
 	// Eğer tag ismi girilmediyse sadece girilenlere göre arasın.
-	if t.Name != "" {
-		regex += t.Name
+	if t.name != "" {
+		regex += t.name
 	}
 
 	if len(t.attribute) > 0 {
@@ -66,6 +66,6 @@ func (s *Search) RegexCheck(t Tag, data string) bool {
 }
 
 func (s *Search) setEnd(t Tag) {
-	end := fmt.Sprintf("/%v", t.Name)
+	end := fmt.Sprintf("/%v", t.name)
 	s.End = end
 }

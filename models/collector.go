@@ -1,15 +1,19 @@
 package models
 
 import (
+	"log"
 	"strings"
 
 	"github.com/cetinboran/gojson/gojson"
 )
 
+// Loop Through Data
 type Each func(i int, name string)
 
-func collectorInit(table gojson.Table) *Collector {
-	return &Collector{Table: table}
+func collectorInit(table gojson.Table, config Config) *Collector {
+	// Scrapper dan aldığım config dosyasını collectorlarda kullanabilmek için ekliorm.
+
+	return &Collector{table: table, config: config}
 }
 
 func (c *Collector) setData(data string) {
@@ -30,7 +34,7 @@ func (c *Collector) readableData() {
 }
 
 func (c *Collector) setSearched(tag Tag) {
-	searched := tag.Name
+	searched := tag.name
 
 	if len(tag.class) > 0 {
 		searched += ":" + strings.Join(tag.class, ".")
@@ -65,9 +69,11 @@ func (c *Collector) Each(f Each) {
 func (c *Collector) Save() {
 	c.readableData()
 
-	newData := gojson.DataInit([]string{"Searched", "Findings"}, []interface{}{c.searched, c.data}, &c.Table)
-	c.Table.Save(newData)
+	if c.config.AutoSave {
+		log.Fatal("Automatic Save is on. It is recommended to turn it off when using this collector's save function.")
+	}
 
-	// Buraya eğer açık ise bunu yazabilirim şimdilik gerek yok.
-	// log.Fatal("Automatic recording is on. It is recommended to turn it off when using this function.")
+	newData := gojson.DataInit([]string{"Searched", "Findings"}, []interface{}{c.searched, c.data}, &c.table)
+	c.table.Save(newData)
+
 }

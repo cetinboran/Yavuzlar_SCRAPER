@@ -102,10 +102,10 @@ func (s *Scraper) FindLinks() *Collector {
 func (s *Scraper) FindWithRegex(tagStr string, regex string) *Collector {
 	tag := createTag(tagStr)
 
-	newCollector := collectorInit(*s.database.Tables["Collection"])
+	newCollector := collectorInit(*s.database.Tables["Collection"], *s.config)
 	newCollector.setSearched(*tag)
 
-	indexes := s.GetIndexes(*tag)
+	indexes := s.getIndexes(*tag)
 
 	for _, v := range indexes {
 		start := v[0]
@@ -119,12 +119,12 @@ func (s *Scraper) FindWithRegex(tagStr string, regex string) *Collector {
 	}
 
 	newCollector.readableData()
-	s.Collected = append(s.Collected, *newCollector)
+	s.collected = append(s.collected, *newCollector)
 
 	// Array'e eklemeden yaparsak auto save atmaz.
 	s.autoSave()
 
-	return &s.Collected[len(s.Collected)-1]
+	return &s.collected[len(s.collected)-1]
 }
 
 func (s *Scraper) FindEmails() *Collector {
@@ -139,12 +139,12 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 	// Onun içindeki girilen attr'nin değerini buluyoruz.
 
 	tag := createTag(tagStr)
-	attrRegex := tag.Search.getAttributeRegex(attr)
+	attrRegex := tag.search.getAttributeRegex(attr)
 
-	newCollector := collectorInit(*s.database.Tables["Collection"])
+	newCollector := collectorInit(*s.database.Tables["Collection"], *s.config)
 	newCollector.setSearched(*tag)
 
-	indexes := s.GetIndexes(*tag)
+	indexes := s.getIndexes(*tag)
 
 	for _, v := range indexes {
 		start := v[0]
@@ -158,23 +158,23 @@ func (s *Scraper) FindAttr(tagStr, attr string) *Collector {
 	}
 
 	newCollector.readableData()
-	s.Collected = append(s.Collected, *newCollector)
+	s.collected = append(s.collected, *newCollector)
 
 	// Array'e eklemeden yaparsak auto save atmaz.
 	s.autoSave()
 
-	return &s.Collected[len(s.Collected)-1]
+	return &s.collected[len(s.collected)-1]
 }
 
 func (s *Scraper) FindWithTag(tag Tag) *Collector {
-	newCollector := collectorInit(*s.database.Tables["Collection"])
+	newCollector := collectorInit(*s.database.Tables["Collection"], *s.config)
 	newCollector.setSearched(tag)
 
 	// Burada setSearch ile search'ın içeriğini dolduruyorum.
 	// Regex'leri end tagleri oluşturuyorum.
-	tag.Search.setSearch(tag)
+	tag.search.setSearch(tag)
 
-	indexes := s.GetIndexes(tag)
+	indexes := s.getIndexes(tag)
 
 	for _, v := range indexes {
 		start := v[0]
@@ -188,12 +188,12 @@ func (s *Scraper) FindWithTag(tag Tag) *Collector {
 	}
 
 	newCollector.readableData()
-	s.Collected = append(s.Collected, *newCollector)
+	s.collected = append(s.collected, *newCollector)
 
 	// Array'e eklemeden yaparsak auto save atmaz.
 	s.autoSave()
 
-	return &s.Collected[len(s.Collected)-1]
+	return &s.collected[len(s.collected)-1]
 }
 
 func (s *Scraper) Find(tagStr string) *Collector {
@@ -267,13 +267,13 @@ func (s *Scraper) findEndIndex(start int) int {
 	return -1
 }
 
-func (s *Scraper) GetIndexes(tag Tag) [][]int {
-	tag.Search.setSearch(tag)
+func (s *Scraper) getIndexes(tag Tag) [][]int {
+	tag.search.setSearch(tag)
 
 	var indexMatrix [][]int
 	var i int
 	for i < len(s.body) {
-		if tag.Search.RegexCheck(tag, s.body[i]) {
+		if tag.search.RegexCheck(tag, s.body[i]) {
 			var indexes []int
 
 			startIndex := i
@@ -308,7 +308,7 @@ func (s *Scraper) Save() {
 	// Önce table'ı resetliyorum.
 	CollectionTable.Reset()
 
-	for _, c := range s.Collected {
+	for _, c := range s.collected {
 		c.readableData()
 
 		newData := gojson.DataInit([]string{"Searched", "Findings"}, []interface{}{c.searched, c.data}, CollectionTable)

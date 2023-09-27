@@ -25,7 +25,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	// AutoSave Added.
+	// Config Added.
 	scraper.SetConfig(&models.Config{
 		AutoSave: false,
 	})
