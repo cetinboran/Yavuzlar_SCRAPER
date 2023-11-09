@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/cetinboran/scrapergo/models"
-	"github.com/cetinboran/scrapergo/scraper"
+	"github.com/cetinboran/yavuzlarscraper/models"
+	"github.com/cetinboran/yavuzlarscraper/scraper"
 )
 
 func main() {
