@@ -9,6 +9,7 @@ import (
 	"github.com/cetinboran/yavuzlarscraper/scraper"
 )
 
+// selam
 func main() {
 	// http://localhost/Yavuzlar_TODO_PHP/src/register.php
 	res, err := http.Get("http://localhost/myBlog/about.php")
